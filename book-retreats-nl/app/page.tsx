@@ -60,6 +60,16 @@ const retreats = [
     image: "https://images.unsxplash.com/photo-1507643179173-4b0d049f4871?auto=format&fit=crop&q=80&w=800",
     link: "#"
   },
+  {
+    id: 5,
+    title: "Item 5",
+    location: "Locatie",
+    desc: "Beschrijving van het retraitehuisje.",
+    rating: 1.0,
+    price: 99,
+    image: "https://images.unsxplash.com/photo-1507643179173-4b0d049f4871?auto=format&fit=crop&q=80&w=800",
+    link: "#"
+  },
 ];
 
 export default function Home() {
@@ -82,6 +92,9 @@ export default function Home() {
           </div> */}
 
           <div className="flex items-center gap-10">
+            <button className="text-xs uppercase tracking-widest font-bold text-stone-500 hover:text-stone-900 transition flex items-center gap-1">
+              <Heart size={16}/> Opgeslagen
+            </button>
             <button className="hidden md:block text-xs uppercase tracking-widest font-bold text-stone-500 hover:text-stone-900 transition">
               Over Ons
             </button>
@@ -97,21 +110,18 @@ export default function Home() {
         <p className="text-lg text-stone-500 max-w-2xl mx-auto font-light leading-relaxed">
           Samengestelde locaties in Nederland speciaal voor boekenliefhebbers.
         </p>
-      </section>
-
-      {/* --- START SEARCHING BUTTON --- */}
-      <section>
-        <div className="flex items-center gap-10">
-          <button className="bg-stone-900 text-[#FAFAF9] px-10 py-3 rounded-full text-sm font-medium hover:bg-stone-700 transition shadow-lg shadow-stone-900/10">
-            Start Zoeken
-          </button>
+        <div className="mt-8">
+          <a href="#productGrid" className="bg-stone-900 text-[#FAFAF9] px-10 py-3 rounded-full text-sm font-medium hover:bg-stone-700 transition shadow-lg shadow-stone-900/10">
+              Start Zoeken
+          </a>
         </div>
+        
       </section>
 
       {/* --- MINIMALIST FILTER --- */}
       <div className="sticky top-20 z-40 bg-[#FAFAF9] border-b border-stone-100 mb-12 shadow-lg shadow-stone-300/10">
         <div className="max-w-7xl mx-auto px-6 flex justify-start py-4 gap-3 overflow-x-auto no-scrollbar">
-          {categories.map((cat) => (
+          {categories.map((cat) => ( 
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
@@ -131,7 +141,7 @@ export default function Home() {
       </div>
 
       {/* --- EDITORIAL GRID --- */}
-      <main className="max-w-7xl mx-auto px-6 pb-24">
+      <main id='productGrid' className="max-w-7xl mx-auto px-6 pb-24">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
           {retreats.map((retreat) => (
             <div key={retreat.id} className="group cursor-pointer">
