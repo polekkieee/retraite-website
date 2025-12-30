@@ -11,7 +11,7 @@ export function createAffiliateLink(originalUrl: string): string {
     if (url.hostname.includes('bookretreats.com')) {
       url.searchParams.set(TRACKING_PARAM, AFFILIATE_ID);
       // Optional: Add a source tag so you know it came from the Dutch site
-      url.searchParams.set('s', 'leesretraites_nl'); 
+      url.searchParams.set('s', 'creatieveretraites_nl'); 
     }
     
     return url.toString();

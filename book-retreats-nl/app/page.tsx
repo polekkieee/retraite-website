@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-// Nieuwe iconen toegevoegd: Palette (Kunst), PenTool (Schrijven), Music (Muziek), Camera (Fotografie)
 import { Search, MapPin, Star, Heart, BookOpen, Coffee, Feather, Wind, Flame, Waves, Palette, PenTool, Music, Camera } from 'lucide-react';
 import { Playfair_Display, Lato } from 'next/font/google';
 import { retreatsData, CategoryId } from './lib/data';
@@ -26,8 +25,6 @@ export default function Home() {
   const filteredRetreats = useMemo(() => {
     if (activeCategory === 'all') return retreatsData;
     
-    // Note: We need to update data.ts tags later to match these new IDs (writing, art, etc.)
-    // For now, it will still try to filter based on the tags in your data file.
     return retreatsData.filter(retreat => 
       retreat.category.includes(activeCategory as CategoryId)
     );
@@ -44,9 +41,6 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-10">
-            <button className="text-xs uppercase tracking-widest font-bold text-stone-500 hover:text-stone-900 transition flex items-center gap-1">
-              <Heart size={16}/> <span className="hidden sm:inline">Favorieten</span>
-            </button>
             <button className="hidden md:block text-xs uppercase tracking-widest font-bold text-stone-500 hover:text-stone-900 transition">
               Over Ons
             </button>
@@ -81,7 +75,7 @@ export default function Home() {
                 flex items-center gap-2 px-6 py-2.5 rounded-full text-sm transition duration-300 border whitespace-nowrap
                 ${activeCategory === cat.id
                   ? 'bg-stone-900 text-white border-stone-900 shadow-md'
-                  : 'bg-white text-stone-600 border-stone-200 hover:border-stone-400'
+                  : 'bg-white text-stone-600 border-stone-200 hover:border-stone-400 cursor-pointer'
                 }
               `}
             >
@@ -103,7 +97,7 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
           {filteredRetreats.map((retreat) => (
-            <div key={retreat.id} className="group cursor-pointer">
+            <div key={retreat.id} onClick={() => window.open(retreat.affiliateLink)} className="group cursor-pointer">
 
               {/* Image Card */}
               <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-stone-200 mb-5 shadow-sm">
@@ -112,10 +106,6 @@ export default function Home() {
                   alt={retreat.title}
                   className="object-cover w-full h-full group-hover:scale-105 transition duration-700 ease-in-out"
                 />
-                <button className="absolute top-4 right-4 bg-white/10 backdrop-blur-sm p-2 rounded-full text-white hover:bg-white hover:text-red-500 transition">
-                  <Heart size={18} />
-                </button>
-                {/* Optional: Add a "Writing" or "Art" badge here later based on category */}
               </div>
 
               {/* Typography & Details */}
@@ -144,9 +134,6 @@ export default function Home() {
                   <span className="text-stone-400 text-sm"> / totaal</span>
                 </div>
                 <a 
-                  href={retreat.affiliateLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="text-xs font-bold underline decoration-stone-300 underline-offset-4 hover:text-stone-900 transition"
                 >
                   Bekijk beschikbaarheid
