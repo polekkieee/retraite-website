@@ -1,12 +1,21 @@
 import { Playfair_Display } from 'next/font/google';
-import { Heart, PenTool, Palette } from 'lucide-react';
-
+import { Heart, PenTool, Palette, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 const playfair = Playfair_Display({ subsets: ['latin'] });
 
 export default function OverOns() {
   return (
     <div className="min-h-screen bg-[#FAFAF9] text-stone-800 pt-32 pb-20">
       <div className="max-w-3xl mx-auto px-6">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-stone-400 hover:text-stone-900 transition-colors mb-8 group"
+        >
+          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+          <span className="text-sm font-medium uppercase tracking-widest text-[11px]">
+            Terug naar overzicht
+          </span>
+        </Link>
         <h1 className={`text-4xl md:text-5xl mb-8 ${playfair.className}`}>Onze Missie</h1>
         
         <div className="prose prose-stone lg:prose-lg leading-relaxed text-stone-600 space-y-6">

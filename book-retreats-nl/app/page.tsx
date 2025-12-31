@@ -41,9 +41,9 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-10">
-            <button className="hidden md:block text-xs uppercase tracking-widest font-bold text-stone-500 hover:text-stone-900 transition">
+            <a href="/over-ons" className="hidden md:block text-xs uppercase tracking-widest font-bold text-stone-500 hover:text-stone-900 transition">
               Over Ons
-            </button>
+            </a>
           </div>
         </div>
       </nav>
@@ -54,8 +54,7 @@ export default function Home() {
           Geef je ideeën de ruimte<br />die ze verdienen.
         </h1>
         <p className="text-lg text-stone-500 max-w-2xl mx-auto font-light leading-relaxed">
-          Van schrijfweken in Toscane tot schilderateliers aan zee.<br />
-          Vind de plek waar jouw creativiteit weer gaat stromen.
+          Vind de retraite waar jouw creativiteit weer gaat stromen.
         </p>
         <div className="mt-8">
           <a href="#productGrid" className="bg-stone-900 text-[#FAFAF9] px-10 py-3 rounded-full text-sm font-medium hover:bg-stone-700 transition shadow-lg shadow-stone-900/10">
@@ -156,7 +155,7 @@ export default function Home() {
           <div className="flex gap-8 md:justify-end text-xs uppercase tracking-widest font-bold">
             <a href="/over-ons" className="hover:text-white transition">Over Ons</a>
             <a href="/privacy" className="hover:text-white transition">Privacy & Disclaimer</a>
-            <a href="https://instagram.com/CreatieveRetraites" target="_blank" className="hover:text-white transition">Instagram</a>
+            <a href="https://instagram.com/CreatieveRetraites.nl" target="_blank" className="hover:text-white transition">Instagram</a>
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-white/5 text-[10px] text-center opacity-50">
