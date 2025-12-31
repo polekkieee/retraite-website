@@ -11,12 +11,12 @@ const lato = Lato({ weight: ['300', '400', '700'], subsets: ['latin'] });
 
 // --- CATEGORIES FOR NICHE ---
 const categories = [
-  { id: 'all', name: 'Alles', icon: <Feather size={16} /> }, 
-  { id: 'writing', name: 'Schrijven', icon: <PenTool size={16} /> }, 
-  { id: 'art', name: 'Kunst & Schilderen', icon: <Palette size={16} /> }, 
+  { id: 'all', name: 'Alles', icon: <Feather size={16} /> },
+  { id: 'writing', name: 'Schrijven', icon: <PenTool size={16} /> },
+  { id: 'art', name: 'Kunst & Schilderen', icon: <Palette size={16} /> },
   { id: 'silence', name: 'Stilte & Focus', icon: <Wind size={16} /> },
   { id: 'nature', name: 'Natuur & Hutjes', icon: <Flame size={16} /> },
-  { id: 'cabin', name: 'Erfgoed', icon: <BookOpen size={16} /> }, 
+  { id: 'cabin', name: 'Erfgoed', icon: <BookOpen size={16} /> },
 ];
 
 export default function Home() {
@@ -24,8 +24,8 @@ export default function Home() {
 
   const filteredRetreats = useMemo(() => {
     if (activeCategory === 'all') return retreatsData;
-    
-    return retreatsData.filter(retreat => 
+
+    return retreatsData.filter(retreat =>
       retreat.category.includes(activeCategory as CategoryId)
     );
   }, [activeCategory]);
@@ -54,12 +54,12 @@ export default function Home() {
           Geef je ideeën de ruimte<br />die ze verdienen.
         </h1>
         <p className="text-lg text-stone-500 max-w-2xl mx-auto font-light leading-relaxed">
-          Van schrijfweken in Toscane tot schilderateliers aan zee.<br/>
+          Van schrijfweken in Toscane tot schilderateliers aan zee.<br />
           Vind de plek waar jouw creativiteit weer gaat stromen.
         </p>
         <div className="mt-8">
           <a href="#productGrid" className="bg-stone-900 text-[#FAFAF9] px-10 py-3 rounded-full text-sm font-medium hover:bg-stone-700 transition shadow-lg shadow-stone-900/10">
-              Vind jouw retraite
+            Vind jouw retraite
           </a>
         </div>
       </section>
@@ -90,7 +90,7 @@ export default function Home() {
 
       {/* --- EDITORIAL GRID --- */}
       <main id='productGrid' className="max-w-7xl mx-auto px-6 pb-24">
-        
+
         <div className="mb-6 text-stone-400 text-sm font-light">
           {filteredRetreats.length} creatieve plekken gevonden
         </div>
@@ -133,7 +133,7 @@ export default function Home() {
                   <span className={`text-lg ${playfair.className}`}>€{retreat.price}</span>
                   <span className="text-stone-400 text-sm"> / totaal</span>
                 </div>
-                <a 
+                <a
                   className="text-xs font-bold underline decoration-stone-300 underline-offset-4 hover:text-stone-900 transition"
                 >
                   Bekijk beschikbaarheid
@@ -144,19 +144,23 @@ export default function Home() {
         </div>
       </main>
 
+      {/* --- FOOTER --- */}
       <footer className="bg-stone-900 text-stone-400 py-16">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-8">
           <div>
             <h2 className={`text-2xl text-[#FAFAF9] mb-4 ${playfair.className}`}>CreatieveRetraites.nl</h2>
-            <p className="max-w-xs font-light">
-              Wij cureren de beste retraites voor schrijvers, kunstenaars en iedereen die ruimte zoekt om te maken.
+            <p className="max-w-xs font-light text-sm">
+              Wij cureren de beste retraites voor schrijvers en kunstenaars.
             </p>
+          </div> 
+          <div className="flex gap-8 md:justify-end text-xs uppercase tracking-widest font-bold">
+            <a href="/over-ons" className="hover:text-white transition">Over Ons</a>
+            <a href="/privacy" className="hover:text-white transition">Privacy & Disclaimer</a>
+            <a href="https://instagram.com/CreatieveRetraites" target="_blank" className="hover:text-white transition">Instagram</a>
           </div>
-          <div className="flex gap-8 md:justify-end text-sm">
-            <a href="#" className="hover:text-white transition">Instagram</a>
-            <a href="#" className="hover:text-white transition">Samenwerken</a>
-            <a href="#" className="hover:text-white transition">Privacy</a>
-          </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-white/5 text-[10px] text-center opacity-50">
+          © 2025 CreatieveRetraites.nl - Onderdeel van de creatieve community.
         </div>
       </footer>
     </div>
