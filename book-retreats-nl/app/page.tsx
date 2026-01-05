@@ -72,7 +72,7 @@ export default function Home() {
           
           {/* 1. LOGO */}
           <a href="/" className={`text-lg md:text-2xl font-semibold tracking-tight text-stone-900 ${playfair.className} relative z-[50]`}>
-            Creatieve<span className="text-stone-500">Retraites</span><span className="text-stone-400">.nl</span>
+            CreatieveRetraites<span className="text-stone-400">.nl</span>
           </a>
 
           <div className="flex items-center gap-4 md:gap-8">
