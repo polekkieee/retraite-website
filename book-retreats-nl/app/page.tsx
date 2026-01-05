@@ -73,7 +73,7 @@ export default function Home() {
         <div className="max-w-lg mx-auto relative group">
           <input
             type="text"
-            placeholder="Zoek op 'Yoga', 'Schrijven' of 'Bos'..."
+            placeholder="Zoek op 'Yoga', 'Schrijven' of 'Spanje'..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => {
