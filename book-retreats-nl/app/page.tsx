@@ -115,10 +115,14 @@ export default function Home() {
         </div>
       </nav>
       {/* --- HERO SECTION --- */}
-      <section className="pt-32 pb-12 px-6 max-w-7xl mx-auto text-center">
+      <section className="pt-30 pb-4 px-6 max-w-7xl mx-auto text-center">
         <h1 className={`text-4xl md:text-6xl text-stone-900 leading-tight mb-6 ${playfair.className}`}>
           Geef je ideeën de ruimte<br />die ze verdienen.
         </h1>
+        <p className="text-sm text-stone-500 max-w-2xl mb-8 mx-auto font-soft leading-relaxed">
+          Van <strong>schrijfweken</strong> in Toscane tot <strong>schilderateliers</strong> aan zee.<br />
+          Vind de plek waar <strong>jouw creativiteit</strong> weer gaat stromen.
+        </p>
 
         {/* Search Bar */}
         <div className="max-w-lg mx-auto relative group">

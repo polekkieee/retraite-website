@@ -15,8 +15,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Creatieve Retraites",
-  description: "Vind de retraite waar jouw creativiteit weer gaat stromen.",
+  title: "Creatieve Retraites | Vind jouw ideale Schrijf- of Kunstretraite",
+  description: "Ontdek de mooiste creatieve retraites in Nederland en Europa. Van schrijfweken tot schildervakanties: vind de ideale plek om je creativiteit weer te laten stromen.",
+  openGraph: {
+    title: "Creatieve Retraites",
+    description: "Vind de retraite waar jouw creativiteit weer gaat stromen.",
+    url: 'https://www.creatieveretraites.nl',
+    siteName: 'Creatieve Retraites',
+    locale: 'nl_NL',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({
