@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Search, MapPin, Star, Feather, Wind, Flame, Palette, PenTool } from 'lucide-react';
+import { Search, MapPin, Star, Feather, Wind, Flame, Palette, PenTool, ChevronDown } from 'lucide-react';
 import { Playfair_Display, Lato } from 'next/font/google';
 import { retreatsEurope, retreatsNetherlands, CategoryId } from './lib/data';
 
@@ -12,8 +12,8 @@ const lato = Lato({ weight: ['300', '400', '700'], subsets: ['latin'] });
 // --- CATEGORIES ---
 const categories = [
   { id: 'all', name: 'Alles', icon: <Feather size={16} /> },
-  { id: 'writing', name: 'Schrijven', icon: <PenTool size={16} /> },
   { id: 'art', name: 'Kunst & Schilderen', icon: <Palette size={16} /> },
+  { id: 'writing', name: 'Schrijven', icon: <PenTool size={16} /> },
   { id: 'silence', name: 'Stilte & Focus', icon: <Wind size={16} /> },
   { id: 'nature', name: 'Natuur & Hutjes', icon: <Flame size={16} /> },
 ];
@@ -23,9 +23,17 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [locationFilter, setLocationFilter] = useState<'europe' | 'nl'>('europe'); // Default to Europe
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Combine logic: Which dataset to use?
   const baseRetreats = locationFilter === 'europe' ? retreatsEurope : retreatsNetherlands;
+
+  function scrollToProducts() {
+    const element = document.getElementById('productGrid');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
 
   const filteredRetreats = useMemo(() => {
     return baseRetreats.filter(retreat => {
@@ -50,19 +58,62 @@ export default function Home() {
 
       {/* --- HEADER --- */}
       <nav className="fixed top-0 w-full z-50 bg-[#FAFAF9]/80 backdrop-blur-md border-b border-stone-200/50">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className={`text-2xl font-semibold tracking-tight text-stone-900 ${playfair.className}`}>
-            Creatieve<span className="text-stone-500">Retraites</span><span className="text-stone-400">.nl</span>
-          </div>
+        
+        {/* DE KLIKVANGER (OVERLAY) */}
+        {/* Deze zit nu op z-90, dus BOVEN je pagina content, maar ONDER het menu */}
+        {isDropdownOpen && (
+          <div 
+            className="fixed inset-0 z-[90] bg-transparent cursor-default h-screen w-screen" 
+            onClick={() => setIsDropdownOpen(false)}
+          />
+        )}
 
-          <div className="flex items-center gap-10">
-            <a href="/over-ons" className="hidden md:block text-xs uppercase tracking-widest font-bold text-stone-500 hover:text-stone-900 transition">
-              Over Ons
-            </a>
+        <div className="max-w-7xl mx-auto px-4 md:px-6 h-13 md:h-13 flex items-center justify-between relative">
+          
+          {/* 1. LOGO */}
+          <a href="/" className={`text-lg md:text-2xl font-semibold tracking-tight text-stone-900 ${playfair.className} relative z-[50]`}>
+            Creatieve<span className="text-stone-500">Retraites</span><span className="text-stone-400">.nl</span>
+          </a>
+
+          <div className="flex items-center gap-4 md:gap-8">
+            
+            {/* 2. INSPIRATIE DROPDOWN */}
+            {/* We geven dit blok z-100 zodat het BOVEN de overlay (z-90) zweeft */}
+            <div className="relative z-[100]">
+              <button 
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="text-[11px] md:text-xs uppercase tracking-widest font-bold text-stone-500 hover:text-stone-900 transition flex items-center gap-1 py-2"
+              >
+                Inspiratie 
+                <ChevronDown size={14} className={`transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isDropdownOpen && (
+                <div className="absolute top-full right-[-50px] md:right-0 w-64 bg-white border border-stone-100 shadow-xl rounded-sm py-4 mt-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                  {/* <div className="px-6 mb-2 text-[10px] uppercase tracking-[0.2em] text-stone-400 font-bold">
+                    Gidsen & Tips
+                  </div>
+                  <a href="/tips/top-10-nederland" className="block px-6 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
+                    Top 10 in Nederland
+                  </a>
+                  <a href="/tips/schrijfretraite-plannen" className="block px-6 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
+                    Hoe plan je een schrijfweek?
+                  </a>
+                  <a href="/tips/inpaklijst" className="block px-6 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
+                    Inpaklijst voor makers
+                  </a>
+                  
+                  <div className="h-px bg-stone-100 my-2 mx-6" />
+                   */}
+                  <a href="/over-ons" className="block px-6 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition font-medium">
+                    Over Ons
+                  </a>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </nav>
-
       {/* --- HERO SECTION --- */}
       <section className="pt-32 pb-12 px-6 max-w-7xl mx-auto text-center">
         <h1 className={`text-4xl md:text-6xl text-stone-900 leading-tight mb-6 ${playfair.className}`}>
@@ -80,10 +131,7 @@ export default function Home() {
               if (e.key === 'Enter') {
                 (e.target as HTMLInputElement).blur();
 
-                const element = document.getElementById('productGrid');
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                scrollToProducts();
               }
             }}
             className="w-full pl-12 pr-6 py-4 bg-white border border-stone-200 rounded-full shadow-sm text-stone-600 focus:outline-none focus:ring-2 focus:ring-stone-400 transition-all placeholder:text-stone-300"
@@ -93,8 +141,8 @@ export default function Home() {
       </section>
 
       {/* --- FILTERS & LOCATION TOGGLE --- */}
-      <div id='productGrid' className="sticky top-20 z-40 bg-[#FAFAF9] border-b border-stone-100 mb-12 shadow-sm/50">
-        <div className="max-w-7xl mx-auto px-6 py-4 space-y-4">
+      <div id='productGrid' className="sticky top-13 z-40 bg-[#FAFAF9] border-b border-stone-100 mb-8 shadow-md/20">
+        <div className="max-w-7xl mx-auto px-4 pt-4 space-y-4">
 
           {/* 1. Location Toggle */}
           <div className="flex justify-center gap-3">
@@ -119,25 +167,31 @@ export default function Home() {
           </div>
 
           {/* 2. Categories */}
-          <div className="flex justify-start md:justify-center overflow-x-auto no-scrollbar gap-3 pb-2">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
-                className={`
-                  flex items-center gap-2 px-5 py-2 rounded-full text-sm transition duration-300 border whitespace-nowrap
-                  ${activeCategory === cat.id
-                    ? 'bg-stone-200 text-stone-900 border-stone-300 font-medium'
-                    : 'bg-transparent text-stone-500 border-transparent hover:bg-white hover:shadow-sm cursor-pointer'
-                  }
-                `}
-              >
-                <span className={activeCategory === cat.id ? 'opacity-100' : 'opacity-50'}>
-                  {cat.icon}
-                </span>
-                <span>{cat.name}</span>
-              </button>
-            ))}
+          <div className="relative">
+
+            <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#FAFAF9] to-transparent z-10 pointer-events-none md:hidden" />
+
+            <div className="flex justify-start md:justify-center overflow-x-auto no-scrollbar gap-2 pb-2 px-1">
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`
+                    flex items-center gap-2 px-4 py-2 rounded-full text-sm transition duration-300 border whitespace-nowrap shrink-0
+                    ${activeCategory === cat.id
+                      ? 'bg-stone-200 text-stone-900 border-stone-300 font-medium shadow-sm'
+                      : 'bg-transparent text-stone-500 border-transparent hover:bg-white hover:shadow-sm cursor-pointer'
+                    }
+                  `}
+                >
+                  <span className={activeCategory === cat.id ? 'opacity-100' : 'opacity-50'}>
+                    {cat.icon}
+                  </span>
+                  <span>{cat.name}</span>
+                </button>
+              ))}
+              <div className="w-8 shrink-0 md:hidden" />
+            </div>
           </div>
         </div>
       </div>
@@ -154,46 +208,71 @@ export default function Home() {
         {filteredRetreats.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
             {filteredRetreats.map((retreat) => (
-              <div key={retreat.id} onClick={() => window.open(retreat.affiliateLink)} className="group cursor-pointer flex flex-col h-full">
+              <div
+                key={retreat.id}
+                onClick={() => window.open(retreat.affiliateLink)}
+                className="group cursor-pointer flex flex-col h-full relative" // relative toegevoegd
+              >
 
-                {/* Image */}
-                <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-stone-200 mb-5 shadow-sm">
+                {/* --- IMAGE CARD MET HOVER EFFECT --- */}
+                <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-stone-200 mb-4 shadow-sm">
                   <img
                     src={retreat.image}
                     alt={retreat.title}
                     loading="lazy"
                     className="object-cover w-full h-full group-hover:scale-105 transition duration-700 ease-in-out"
                   />
-                </div>
 
-                {/* Content */}
-                <div className="flex justify-between items-baseline mb-1">
-                  <h3 className={`text-lg text-stone-900 ${playfair.className} truncate pr-2`}>
-                    {retreat.title}
-                  </h3>
-                  <div className="flex items-center gap-1 text-sm font-medium text-stone-900 shrink-0">
-                    <Star size={13} className="fill-stone-900" />
-                    <span>{retreat.rating}</span>
+                  {/* --- DESKTOP: SLIDE UP TEXT OVERLAY --- */}
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                    <div className="text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hidden md:block">
+                      {/* Alleen zichtbaar op desktop (md:block) */}
+                      <p className="text-sm font-medium leading-relaxed drop-shadow-2xl">
+                        {retreat.desc}
+                      </p>
+                      <div className="mt-3 text-xs font-bold uppercase tracking-widest text-stone-200 underline decoration-stone-400 underline-offset-4">
+                        Lees meer &rarr;
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 text-stone-500 text-xs uppercase tracking-widest mb-3">
-                  <MapPin size={12} />
-                  {retreat.location}
-                </div>
-
-                <p className="text-stone-500 text-sm leading-relaxed mb-4 line-clamp-2 min-h-[40px]">
-                  {retreat.desc}
-                </p>
-
-                <div className="flex items-center justify-between border-t border-stone-200 pt-4 mt-auto">
-                  <div>
-                    <span className={`text-lg ${playfair.className}`}>€{retreat.price}</span>
-                    <span className="text-stone-400 text-xs ml-1">totaal</span>
+                {/* --- CONTENT ONDER DE FOTO --- */}
+                <div className="flex flex-col flex-grow">
+                  {/* Titel & Rating */}
+                  <div className="flex justify-between items-start mb-1">
+                    <h3 className={`text-lg text-stone-900 ${playfair.className} pr-2 leading-tight`}>
+                      {retreat.title}
+                    </h3>
+                    <div className="flex items-center gap-1 text-sm font-medium text-stone-900 shrink-0 bg-stone-100 px-2 py-1 rounded-full">
+                      <Star size={12} className="fill-stone-900" />
+                      <span>{retreat.rating}</span>
+                    </div>
                   </div>
-                  <a className="text-xs font-bold underline decoration-stone-300 underline-offset-4 hover:text-stone-900 transition">
-                    Bekijk opties
-                  </a>
+
+                  {/* Locatie */}
+                  <div className="flex items-center gap-1 text-stone-500 text-xs uppercase tracking-widest mb-3">
+                    <MapPin size={12} />
+                    {retreat.location}
+                  </div>
+
+                  {/* --- MOBIEL: KORTE TEKST --- */}
+                  {/* Op desktop verbergen we deze tekst (md:hidden) omdat hij daar nu IN de foto staat. 
+          Op mobiel tonen we hem wel, maar afgekort. */}
+                  <p className="text-stone-500 text-sm leading-relaxed mb-4 line-clamp-2 md:hidden">
+                    {retreat.desc}
+                  </p>
+
+                  {/* Prijs & Link */}
+                  <div className="flex items-center justify-between border-t border-stone-100 pt-4 mt-auto">
+                    <div>
+                      <span className={`text-lg ${playfair.className}`}>€{retreat.price}</span>
+                      <span className="text-stone-400 text-xs ml-1">totaal</span>
+                    </div>
+                    <span className="text-xs font-bold underline decoration-stone-300 underline-offset-4 hover:text-stone-900 transition">
+                      Bekijk opties
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}

@@ -58,6 +58,10 @@ export default function OverOns() {
           <p className="italic border-l-4 border-stone-200 pl-6 py-2">
             "Wij maken de ruimte. Jij vult hem in."
           </p>
+
+          <p>
+            Contact: <a href="mailto:info@creativereitraites.nl" className="text-stone-700">info@creativereitraites.nl</a>
+          </p>
         </div>
       </div>
     </div>
