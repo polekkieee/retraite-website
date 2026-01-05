@@ -1,34 +1,49 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Search, MapPin, Star, Heart, BookOpen, Coffee, Feather, Wind, Flame, Waves, Palette, PenTool, Music, Camera } from 'lucide-react';
+import { Search, MapPin, Star, Feather, Wind, Flame, Palette, PenTool } from 'lucide-react';
 import { Playfair_Display, Lato } from 'next/font/google';
-import { retreatsData, CategoryId } from './lib/data';
+import { retreatsEurope, retreatsNetherlands, CategoryId } from './lib/data';
 
 // --- FONTS ---
 const playfair = Playfair_Display({ subsets: ['latin'] });
 const lato = Lato({ weight: ['300', '400', '700'], subsets: ['latin'] });
 
-// --- CATEGORIES FOR NICHE ---
+// --- CATEGORIES ---
 const categories = [
   { id: 'all', name: 'Alles', icon: <Feather size={16} /> },
   { id: 'writing', name: 'Schrijven', icon: <PenTool size={16} /> },
   { id: 'art', name: 'Kunst & Schilderen', icon: <Palette size={16} /> },
   { id: 'silence', name: 'Stilte & Focus', icon: <Wind size={16} /> },
   { id: 'nature', name: 'Natuur & Hutjes', icon: <Flame size={16} /> },
-  { id: 'cabin', name: 'Erfgoed', icon: <BookOpen size={16} /> },
 ];
 
 export default function Home() {
+  // State for filters
   const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [locationFilter, setLocationFilter] = useState<'europe' | 'nl'>('europe'); // Default to Europe
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  // Combine logic: Which dataset to use?
+  const baseRetreats = locationFilter === 'europe' ? retreatsEurope : retreatsNetherlands;
 
   const filteredRetreats = useMemo(() => {
-    if (activeCategory === 'all') return retreatsData;
+    return baseRetreats.filter(retreat => {
+      // 1. Check Category
+      const matchesCategory = activeCategory === 'all'
+        ? true
+        : retreat.category.includes(activeCategory as CategoryId);
 
-    return retreatsData.filter(retreat =>
-      retreat.category.includes(activeCategory as CategoryId)
-    );
-  }, [activeCategory]);
+      // 2. Check Search (Title, Desc, or Location)
+      const query = searchQuery.toLowerCase();
+      const matchesSearch =
+        retreat.title.toLowerCase().includes(query) ||
+        retreat.desc.toLowerCase().includes(query) ||
+        retreat.location.toLowerCase().includes(query);
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [activeCategory, locationFilter, searchQuery, baseRetreats]);
 
   return (
     <div className={`min-h-screen bg-[#FAFAF9] text-stone-800 ${lato.className}`}>
@@ -37,7 +52,7 @@ export default function Home() {
       <nav className="fixed top-0 w-full z-50 bg-[#FAFAF9]/80 backdrop-blur-md border-b border-stone-200/50">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className={`text-2xl font-semibold tracking-tight text-stone-900 ${playfair.className}`}>
-            CreatieveRetraites<span className="text-stone-400">.nl</span>
+            Creatieve<span className="text-stone-500">Retraites</span><span className="text-stone-400">.nl</span>
           </div>
 
           <div className="flex items-center gap-10">
@@ -48,99 +63,153 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* --- HERO SECTION (REBRANDED) --- */}
-      <section className="pt-32 pb-16 px-6 max-w-7xl mx-auto text-center">
+      {/* --- HERO SECTION --- */}
+      <section className="pt-32 pb-12 px-6 max-w-7xl mx-auto text-center">
         <h1 className={`text-4xl md:text-6xl text-stone-900 leading-tight mb-6 ${playfair.className}`}>
           Geef je ideeën de ruimte<br />die ze verdienen.
         </h1>
-        <p className="text-lg text-stone-500 max-w-2xl mx-auto font-light leading-relaxed">
-          Vind de retraite waar jouw creativiteit weer gaat stromen.
-        </p>
-        <div className="mt-8">
-          <a href="#productGrid" className="bg-stone-900 text-[#FAFAF9] px-10 py-3 rounded-full text-sm font-medium hover:bg-stone-700 transition shadow-lg shadow-stone-900/10">
-            Vind jouw retraite
-          </a>
+
+        {/* Search Bar */}
+        <div className="max-w-lg mx-auto relative group">
+          <input
+            type="text"
+            placeholder="Zoek op 'Yoga', 'Schrijven' of 'Bos'..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                (e.target as HTMLInputElement).blur();
+
+                const element = document.getElementById('productGrid');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }
+            }}
+            className="w-full pl-12 pr-6 py-4 bg-white border border-stone-200 rounded-full shadow-sm text-stone-600 focus:outline-none focus:ring-2 focus:ring-stone-400 transition-all placeholder:text-stone-300"
+          />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 group-focus-within:text-stone-800 transition-colors" size={20} />
         </div>
       </section>
 
-      {/* --- MINIMALIST FILTER --- */}
-      <div className="sticky top-20 z-40 bg-[#FAFAF9] border-b border-stone-100 mb-12 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 flex justify-start py-4 gap-3 overflow-x-auto no-scrollbar">
-          {categories.map((cat) => (
+      {/* --- FILTERS & LOCATION TOGGLE --- */}
+      <div id='productGrid' className="sticky top-20 z-40 bg-[#FAFAF9] border-b border-stone-100 mb-12 shadow-sm/50">
+        <div className="max-w-7xl mx-auto px-6 py-4 space-y-4">
+
+          {/* 1. Location Toggle */}
+          <div className="flex justify-center gap-3">
             <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              className={`
-                flex items-center gap-2 px-6 py-2.5 rounded-full text-sm transition duration-300 border whitespace-nowrap
-                ${activeCategory === cat.id
-                  ? 'bg-stone-900 text-white border-stone-900 shadow-md'
-                  : 'bg-white text-stone-600 border-stone-200 hover:border-stone-400 cursor-pointer'
-                }
-              `}
+              onClick={() => setLocationFilter('europe')}
+              className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${locationFilter === 'europe'
+                ? 'bg-stone-800 text-white border-stone-800 shadow-md transform scale-105 '
+                : 'bg-white text-stone-400 border-stone-200 hover:border-stone-400 cursor-pointer'
+                }`}
             >
-              <span className={activeCategory === cat.id ? 'opacity-100' : 'opacity-70'}>
-                {cat.icon}
-              </span>
-              <span>{cat.name}</span>
+              🇪🇺 Europa
             </button>
-          ))}
+            <button
+              onClick={() => setLocationFilter('nl')}
+              className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${locationFilter === 'nl'
+                ? 'bg-stone-800 text-white border-stone-800 shadow-md transform scale-105'
+                : 'bg-white text-stone-400 border-stone-200 hover:border-stone-400 cursor-pointer'
+                }`}
+            >
+              🇳🇱 Nederland
+            </button>
+          </div>
+
+          {/* 2. Categories */}
+          <div className="flex justify-start md:justify-center overflow-x-auto no-scrollbar gap-3 pb-2">
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
+                className={`
+                  flex items-center gap-2 px-5 py-2 rounded-full text-sm transition duration-300 border whitespace-nowrap
+                  ${activeCategory === cat.id
+                    ? 'bg-stone-200 text-stone-900 border-stone-300 font-medium'
+                    : 'bg-transparent text-stone-500 border-transparent hover:bg-white hover:shadow-sm cursor-pointer'
+                  }
+                `}
+              >
+                <span className={activeCategory === cat.id ? 'opacity-100' : 'opacity-50'}>
+                  {cat.icon}
+                </span>
+                <span>{cat.name}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* --- EDITORIAL GRID --- */}
-      <main id='productGrid' className="max-w-7xl mx-auto px-6 pb-24">
+      {/* --- GRID --- */}
+      <main className="max-w-7xl mx-auto px-6 pb-24">
 
-        <div className="mb-6 text-stone-400 text-sm font-light">
-          {filteredRetreats.length} creatieve plekken gevonden
+        <div className="mb-8 text-stone-400 text-sm font-light text-center md:text-left animate-fade-in">
+          {filteredRetreats.length} {filteredRetreats.length === 1 ? 'plek' : 'plekken'} gevonden
+          {locationFilter === 'nl' ? ' in Nederland' : ' in Europa'}
+          {searchQuery && ` voor "${searchQuery}"`}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
-          {filteredRetreats.map((retreat) => (
-            <div key={retreat.id} onClick={() => window.open(retreat.affiliateLink)} className="group cursor-pointer">
+        {filteredRetreats.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+            {filteredRetreats.map((retreat) => (
+              <div key={retreat.id} onClick={() => window.open(retreat.affiliateLink)} className="group cursor-pointer flex flex-col h-full">
 
-              {/* Image Card */}
-              <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-stone-200 mb-5 shadow-sm">
-                <img
-                  src={retreat.image}
-                  alt={retreat.title}
-                  className="object-cover w-full h-full group-hover:scale-105 transition duration-700 ease-in-out"
-                />
-              </div>
+                {/* Image */}
+                <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-stone-200 mb-5 shadow-sm">
+                  <img
+                    src={retreat.image}
+                    alt={retreat.title}
+                    loading="lazy"
+                    className="object-cover w-full h-full group-hover:scale-105 transition duration-700 ease-in-out"
+                  />
+                </div>
 
-              {/* Typography & Details */}
-              <div className="flex justify-between items-baseline mb-1">
-                <h3 className={`text-lg text-stone-900 ${playfair.className} truncate pr-2`}>
-                  {retreat.title}
-                </h3>
-                <div className="flex items-center gap-1 text-sm font-medium text-stone-900 shrink-0">
-                  <Star size={13} className="fill-stone-900" />
-                  <span>{retreat.rating}</span>
+                {/* Content */}
+                <div className="flex justify-between items-baseline mb-1">
+                  <h3 className={`text-lg text-stone-900 ${playfair.className} truncate pr-2`}>
+                    {retreat.title}
+                  </h3>
+                  <div className="flex items-center gap-1 text-sm font-medium text-stone-900 shrink-0">
+                    <Star size={13} className="fill-stone-900" />
+                    <span>{retreat.rating}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1 text-stone-500 text-xs uppercase tracking-widest mb-3">
+                  <MapPin size={12} />
+                  {retreat.location}
+                </div>
+
+                <p className="text-stone-500 text-sm leading-relaxed mb-4 line-clamp-2 min-h-[40px]">
+                  {retreat.desc}
+                </p>
+
+                <div className="flex items-center justify-between border-t border-stone-200 pt-4 mt-auto">
+                  <div>
+                    <span className={`text-lg ${playfair.className}`}>€{retreat.price}</span>
+                    <span className="text-stone-400 text-xs ml-1">totaal</span>
+                  </div>
+                  <a className="text-xs font-bold underline decoration-stone-300 underline-offset-4 hover:text-stone-900 transition">
+                    Bekijk opties
+                  </a>
                 </div>
               </div>
-
-              <div className="flex items-center gap-1 text-stone-500 text-xs uppercase tracking-widest mb-3">
-                <MapPin size={12} />
-                {retreat.location}
-              </div>
-
-              <p className="text-stone-500 text-sm leading-relaxed mb-4 line-clamp-2 min-h-[40px]">
-                {retreat.desc}
-              </p>
-
-              <div className="flex items-center justify-between border-t border-stone-200 pt-4 mt-auto">
-                <div>
-                  <span className={`text-lg ${playfair.className}`}>€{retreat.price}</span>
-                  <span className="text-stone-400 text-sm"> / totaal</span>
-                </div>
-                <a
-                  className="text-xs font-bold underline decoration-stone-300 underline-offset-4 hover:text-stone-900 transition"
-                >
-                  Bekijk beschikbaarheid
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          /* Empty State */
+          <div className="text-center py-20 text-stone-400">
+            <p className="text-lg mb-2">Geen retraites gevonden in {locationFilter === 'nl' ? 'Nederland' : 'Europa'}.</p>
+            <button
+              onClick={() => { setSearchQuery(''); setActiveCategory('all'); }}
+              className="text-sm underline hover:text-stone-900 cursor-pointer"
+            >
+              Filters wissen
+            </button>
+          </div>
+        )}
       </main>
 
       {/* --- FOOTER --- */}
@@ -149,9 +218,9 @@ export default function Home() {
           <div>
             <h2 className={`text-2xl text-[#FAFAF9] mb-4 ${playfair.className}`}>CreatieveRetraites.nl</h2>
             <p className="max-w-xs font-light text-sm">
-              Wij cureren de beste retraites voor schrijvers en kunstenaars.
+              De startplek voor jouw volgende creatieve sprong. Wij verbinden makers met unieke locaties.
             </p>
-          </div> 
+          </div>
           <div className="flex gap-8 md:justify-end text-xs uppercase tracking-widest font-bold">
             <a href="/over-ons" className="hover:text-white transition">Over Ons</a>
             <a href="/privacy" className="hover:text-white transition">Privacy & Disclaimer</a>
@@ -159,7 +228,7 @@ export default function Home() {
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-white/5 text-[10px] text-center opacity-50">
-          © 2025 CreatieveRetraites.nl - Onderdeel van de creatieve community.
+          © 2026 CreatieveRetraites.nl - Onderdeel van de creatieve community.
         </div>
       </footer>
     </div>
