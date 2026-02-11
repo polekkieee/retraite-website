@@ -214,7 +214,7 @@ export default function Home() {
             {filteredRetreats.map((retreat) => (
               <div
                 key={retreat.id}
-                onClick={() => window.open(retreat.affiliateLink)}
+                onClick={() => window.open("https://bookretreats.com"+retreat.affiliateLink)}
                 className="group cursor-pointer flex flex-col h-full relative" // relative toegevoegd
               >
 
