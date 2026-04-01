@@ -274,7 +274,7 @@ export default function Home() {
                       <span className="text-stone-400 text-xs ml-1">totaal</span>
                     </div>
                     <span className="text-xs font-bold underline decoration-stone-300 underline-offset-4 hover:text-stone-900 transition">
-                      Bekijk opties
+                      {retreat.dateDisplay ? 'Beschikbaar' : 'Lees meer'} &rarr;
                     </span>
                   </div>
                 </div>
