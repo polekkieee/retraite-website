@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Search, MapPin, Star, Feather, Wind, Flame, Palette, PenTool, ChevronDown } from 'lucide-react';
+import { Search, MapPin, Star, Feather, Wind, Flame, Palette, PenTool, ChevronDown, Calendar } from 'lucide-react';
 import { Playfair_Display, Lato } from 'next/font/google';
 import { retreatsEurope, retreatsNetherlands, CategoryId } from './lib/data';
+
 
 // --- FONTS ---
 const playfair = Playfair_Display({ subsets: ['latin'] });
@@ -18,6 +19,7 @@ const categories = [
   { id: 'nature', name: 'Natuur & Hutjes', icon: <Flame size={16} /> },
 ];
 
+
 export default function Home() {
   // State for filters
   const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -25,8 +27,28 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  // State for date filter
+  const [selectedMonth, setSelectedMonth] = useState<string>('all');
+
   // Combine logic: Which dataset to use?
   const baseRetreats = locationFilter === 'europe' ? retreatsEurope : retreatsNetherlands;
+
+  const availableMonths = useMemo(() => {
+    const months = new Set<string>();
+    baseRetreats.forEach(r => {
+      if (r.startDate) {
+        months.add(r.startDate.substring(0, 7)); // Pakt "YYYY-MM"
+      }
+    });
+    return Array.from(months).sort(); // Sorteer chronologisch
+  }, [baseRetreats]);
+
+  // Helper functie om "2026-05" mooi te vertalen naar "mei 2026"
+  const formatMonthText = (yyyyMM: string) => {
+    const [year, month] = yyyyMM.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, 1);
+    return date.toLocaleDateString('nl-NL', { month: 'long', year: 'numeric' });
+  };
 
   function scrollToProducts() {
     const element = document.getElementById('productGrid');
@@ -49,42 +71,45 @@ export default function Home() {
         retreat.desc.toLowerCase().includes(query) ||
         retreat.location.toLowerCase().includes(query);
 
-      return matchesCategory && matchesSearch;
+      // 3. Check Month (flexibele datums (zonder startDate) laten we altijd zien)
+      const matchesMonth = selectedMonth === 'all' || !retreat.startDate || retreat.startDate.startsWith(selectedMonth);
+
+      return matchesCategory && matchesSearch && matchesMonth;
     });
-  }, [activeCategory, locationFilter, searchQuery, baseRetreats]);
+  }, [activeCategory, locationFilter, searchQuery, selectedMonth, baseRetreats]);
 
   return (
     <div className={`min-h-screen bg-[#FAFAF9] text-stone-800 ${lato.className}`}>
 
       {/* --- HEADER --- */}
       <nav className="fixed top-0 w-full z-50 bg-[#FAFAF9]/80 backdrop-blur-md border-b border-stone-200/50">
-        
+
         {/* DE KLIKVANGER (OVERLAY) */}
         {/* Deze zit nu op z-90, dus BOVEN je pagina content, maar ONDER het menu */}
         {isDropdownOpen && (
-          <div 
-            className="fixed inset-0 z-[90] bg-transparent cursor-default h-screen w-screen" 
+          <div
+            className="fixed inset-0 z-[90] bg-transparent cursor-default h-screen w-screen"
             onClick={() => setIsDropdownOpen(false)}
           />
         )}
 
         <div className="max-w-7xl mx-auto px-4 md:px-6 h-13 md:h-13 flex items-center justify-between relative">
-          
+
           {/* 1. LOGO */}
           <a href="/" className={`text-lg md:text-2xl font-semibold tracking-tight text-stone-900 ${playfair.className} relative z-[50]`}>
             CreatieveRetraites<span className="text-stone-400">.nl</span>
           </a>
 
           <div className="flex items-center gap-4 md:gap-8">
-            
+
             {/* 2. INSPIRATIE DROPDOWN */}
             {/* We geven dit blok z-100 zodat het BOVEN de overlay (z-90) zweeft */}
             <div className="relative z-[100]">
-              <button 
+              <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="text-[11px] md:text-xs uppercase tracking-widest font-bold text-stone-500 hover:text-stone-900 transition flex items-center gap-1 py-2"
               >
-                Inspiratie 
+                Inspiratie
                 <ChevronDown size={14} className={`transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
@@ -148,26 +173,45 @@ export default function Home() {
       <div id='productGrid' className="sticky top-13 z-40 bg-[#FAFAF9] border-b border-stone-100 mb-8 shadow-md/20">
         <div className="max-w-7xl mx-auto px-4 pt-4 space-y-4">
 
-          {/* 1. Location Toggle */}
-          <div className="flex justify-center gap-3">
-            <button
-              onClick={() => setLocationFilter('europe')}
-              className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${locationFilter === 'europe'
-                ? 'bg-stone-800 text-white border-stone-800 shadow-md transform scale-105 '
-                : 'bg-white text-stone-400 border-stone-200 hover:border-stone-400 cursor-pointer'
-                }`}
-            >
-              🇪🇺 Europa
-            </button>
-            <button
-              onClick={() => setLocationFilter('nl')}
-              className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${locationFilter === 'nl'
-                ? 'bg-stone-800 text-white border-stone-800 shadow-md transform scale-105'
-                : 'bg-white text-stone-400 border-stone-200 hover:border-stone-400 cursor-pointer'
-                }`}
-            >
-              🇳🇱 Nederland
-            </button>
+          {/* 1. Location Toggle & Datum Filter */}
+          <div className="flex flex-col md:flex-row justify-center items-center gap-3">
+            <div className="flex gap-3">
+              <button
+                onClick={() => setLocationFilter('europe')}
+                className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${locationFilter === 'europe'
+                  ? 'bg-stone-800 text-white border-stone-800 shadow-md transform scale-105 '
+                  : 'bg-white text-stone-400 border-stone-200 hover:border-stone-400 cursor-pointer'
+                  }`}
+              >
+                🇪🇺 Europa
+              </button>
+              <button
+                onClick={() => setLocationFilter('nl')}
+                className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${locationFilter === 'nl'
+                  ? 'bg-stone-800 text-white border-stone-800 shadow-md transform scale-105'
+                  : 'bg-white text-stone-400 border-stone-200 hover:border-stone-400 cursor-pointer'
+                  }`}
+              >
+                🇳🇱 Nederland
+              </button>
+            </div>
+
+            {/* Datum Dropdown */}
+            <div className="relative w-full md:w-auto">
+              <select
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                className="w-full appearance-none bg-white border border-stone-200 text-stone-500 hover:text-stone-800 text-xs font-bold uppercase tracking-widest px-6 py-2 pr-10 rounded-full focus:outline-none cursor-pointer transition-all shadow-sm"
+              >
+                <option value="all">🗓️ Alle datums</option>
+                {availableMonths.map(month => (
+                  <option key={month} value={month}>
+                    🗓️ {formatMonthText(month)}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 pointer-events-none" />
+            </div>
           </div>
 
           {/* 2. Categories */}
@@ -214,7 +258,7 @@ export default function Home() {
             {filteredRetreats.map((retreat) => (
               <div
                 key={retreat.id}
-                onClick={() => window.open("https://bookretreats.com"+retreat.affiliateLink)}
+                onClick={() => window.open("https://bookretreats.com" + retreat.affiliateLink)}
                 className="group cursor-pointer flex flex-col h-full relative" // relative toegevoegd
               >
 
@@ -254,10 +298,18 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Locatie */}
-                  <div className="flex items-center gap-1 text-stone-500 text-xs uppercase tracking-widest mb-3">
-                    <MapPin size={12} />
-                    {retreat.location}
+                  {/* Locatie & Datum */}
+                  <div className="flex flex-col gap-1 mb-3">
+                    <div className="flex items-center gap-1 text-stone-500 text-xs uppercase tracking-widest">
+                      <MapPin size={12} />
+                      {retreat.location}
+                    </div>
+                    {retreat.dateDisplay && (
+                      <div className="flex items-center gap-1 text-stone-800 text-xs uppercase tracking-widest font-medium">
+                        <Calendar size={12} className="text-[#C8A663]" />
+                        {retreat.dateDisplay}
+                      </div>
+                    )}
                   </div>
 
                   {/* --- MOBIEL: KORTE TEKST --- */}
