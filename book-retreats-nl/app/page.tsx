@@ -298,18 +298,12 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Locatie & Datum */}
+                  {/* Locatie */}
                   <div className="flex flex-col gap-1 mb-3">
                     <div className="flex items-center gap-1 text-stone-500 text-xs uppercase tracking-widest">
                       <MapPin size={12} />
                       {retreat.location}
                     </div>
-                    {retreat.dateDisplay && (
-                      <div className="flex items-center gap-1 text-stone-800 text-xs uppercase tracking-widest font-medium">
-                        <Calendar size={12} className="text-[#C8A663]" />
-                        {retreat.dateDisplay}
-                      </div>
-                    )}
                   </div>
 
                   {/* --- MOBIEL: KORTE TEKST --- */}
@@ -319,15 +313,20 @@ export default function Home() {
                     {retreat.desc}
                   </p>
 
-                  {/* Prijs & Link */}
-                  <div className="flex items-center justify-between border-t border-stone-100 pt-4 mt-auto">
-                    <div>
+                  {/* Prijs & Datum */}
+                  <div className="flex items-center justify-between border-t border-stone-100 pt-4 mt-auto gap-4">
+                    <div className="shrink-0">
                       <span className={`text-lg ${playfair.className}`}>€{retreat.price}</span>
-                      <span className="text-stone-400 text-xs ml-1">totaal</span>
                     </div>
-                    <span className="text-xs font-bold underline decoration-stone-300 underline-offset-4 hover:text-stone-900 transition">
-                      {retreat.dateDisplay ? 'Beschikbaar' : 'Lees meer'} &rarr;
-                    </span>
+                    
+                    {retreat.dateDisplay && (
+                      <div className="flex items-center justify-end gap-1.5 text-stone-800 text-[10px] md:text-xs uppercase tracking-widest font-medium group-hover:text-stone-600 transition-colors">
+                        <Calendar size={14} className="text-[#C8A663] shrink-0" />
+                        <span className="leading-[1.4] text-right max-w-[140px] md:max-w-[180px]">
+                          {retreat.dateDisplay}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
