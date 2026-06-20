@@ -18,6 +18,16 @@ export interface Retreat {
   dateDisplay?: string; 
 }
 
+export interface FeaturedPageData {
+  id: number;
+  created_at: string;
+  pageTitle: string;
+  metaDescription: string;
+  introText: string;
+  outroText: string;
+  retraites: number[]; 
+}
+
 export async function getRetreatsNL(): Promise<any[]> {
   const {data} = await supabase.from('retraitesNL').select();
 
@@ -27,5 +37,15 @@ export async function getRetreatsNL(): Promise<any[]> {
 export async function getRetreatsEurope(): Promise<any[]> {
   const {data} = await supabase.from('retraitesEU').select();
 
+  return data || [];
+}
+
+export async function getFeaturedPageData(): Promise<any> {
+  const { data } = await supabase
+    .from('retraitesUitgelicht') 
+    .select('*')
+    .order('created_at', { ascending: false }) 
+    .limit(1) 
+    .single(); 
   return data || [];
 }

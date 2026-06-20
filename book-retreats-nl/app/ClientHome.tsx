@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Search, MapPin, Star, Feather, Wind, Flame, Palette, PenTool, ChevronDown, Calendar } from 'lucide-react';
 import { Playfair_Display, Lato } from 'next/font/google';
 import { CategoryId } from './lib/data';
@@ -129,21 +129,13 @@ export default function ClientHome({ initialRetreatsEU, initialRetreatsNL }: { i
   
                 {isDropdownOpen && (
                   <div className="absolute top-full right-[-50px] md:right-0 w-64 bg-white border border-stone-100 shadow-xl rounded-sm py-4 mt-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                    {/* <div className="px-6 mb-2 text-[10px] uppercase tracking-[0.2em] text-stone-400 font-bold">
-                      Gidsen & Tips
+                    <div className="px-6 mb-2 text-[10px] uppercase tracking-[0.2em] text-stone-400 font-bold">
+                      Tips
                     </div>
-                    <a href="/tips/top-10-nederland" className="block px-6 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
-                      Top 10 in Nederland
+                    <a href="/uitgelicht" className="block px-6 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
+                      Uitgelichte retraites
                     </a>
-                    <a href="/tips/schrijfretraite-plannen" className="block px-6 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
-                      Hoe plan je een schrijfweek?
-                    </a>
-                    <a href="/tips/inpaklijst" className="block px-6 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
-                      Inpaklijst voor makers
-                    </a>
-                    
                     <div className="h-px bg-stone-100 my-2 mx-6" />
-                     */}
                     <a href="/over-ons" className="block px-6 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition font-medium">
                       Over Ons
                     </a>
