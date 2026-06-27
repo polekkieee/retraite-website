@@ -1,0 +1,38 @@
+# robots.txt — CreatieveRetraites.nl
+# Bijgewerkt: juni 2026
+
+# Alle crawlers: volledige toegang
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.creatieveretraites.nl/sitemap.xml
+
+# -----------------------------------------------
+# AI-crawlers: toegang tot publieke content
+# llms.txt beschikbaar op /llms.txt
+# -----------------------------------------------
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Bytespider
+Allow: /
