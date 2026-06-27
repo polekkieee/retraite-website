@@ -1,4 +1,5 @@
 import { supabase } from '../utils/supabase';
+import { unstable_cache } from 'next/cache';
 
 export type CategoryId = 'all' | 'art' | 'writing' | 'silence' | 'nature';
 
@@ -28,24 +29,34 @@ export interface FeaturedPageData {
   retraites: number[]; 
 }
 
-export async function getRetreatsNL(): Promise<any[]> {
-  const {data} = await supabase.from('retraitesNL').select();
+export const getRetreatsNL = unstable_cache(
+  async (): Promise<Retreat[]> => {
+    const { data } = await supabase.from('retraitesNL').select();
+    return data || [];
+  },
+  ['retreats-nl'],
+  { revalidate: 3600 }
+);
 
-  return data || [];
-}
+export const getRetreatsEurope = unstable_cache(
+  async (): Promise<Retreat[]> => {
+    const { data } = await supabase.from('retraitesEU').select();
+    return data || [];
+  },
+  ['retreats-europe'],
+  { revalidate: 3600 }
+);
 
-export async function getRetreatsEurope(): Promise<any[]> {
-  const {data} = await supabase.from('retraitesEU').select();
-
-  return data || [];
-}
-
-export async function getFeaturedPageData(): Promise<any> {
-  const { data } = await supabase
-    .from('retraitesUitgelicht') 
-    .select('*')
-    .order('created_at', { ascending: false }) 
-    .limit(1) 
-    .single(); 
-  return data || [];
-}
+export const getFeaturedPageData = unstable_cache(
+  async (): Promise<FeaturedPageData> => {
+    const { data } = await supabase
+      .from('retraitesUitgelicht')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+    return data || null;
+  },
+  ['featured-page'],
+  { revalidate: 3600 }
+);

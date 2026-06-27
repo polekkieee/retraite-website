@@ -2,14 +2,23 @@
 import { getRetreatsEurope, getRetreatsNL } from './lib/data';
 import ClientHome from './ClientHome';
 
-// Vercel onthoudt deze pagina voor 1 uur (3600 seconden)
-export const revalidate = 3600; 
+export const dynamic = 'force-dynamic'; // ← vervangt revalidate, zodat params werken
 
-export default async function Page() {
-  // Schoon en simpel: we roepen de functie aan uit je lib/data.ts bestand
+export default async function Page({
+  searchParams
+}: {
+  searchParams: Promise<{ locatie?: string; categorie?: string }> // ← Promise type
+}) {
   const retreatsEurope = await getRetreatsEurope();
   const retreatsNL = await getRetreatsNL();
+  const { locatie, categorie } = await searchParams; // ← await het hele object
 
-  // We geven de data mee aan de interactieve client component
-  return <ClientHome initialRetreatsEU={retreatsEurope} initialRetreatsNL={retreatsNL} />;
+  return (
+    <ClientHome
+      initialRetreatsEU={retreatsEurope}
+      initialRetreatsNL={retreatsNL}
+      urlLocatie={locatie || ''}
+      urlCategorie={categorie || ''}
+    />
+  );
 }
