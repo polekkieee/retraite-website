@@ -374,6 +374,7 @@ export default function ClientHome({ initialRetreatsEU, initialRetreatsNL, urlLo
             </p>
           </div>
           <div className="flex gap-8 md:justify-end text-xs uppercase tracking-widest font-bold">
+            <a href="/uitgelicht" className="hover:text-white transition">Uitgelichte Retraites</a>
             <a href="/over-ons" className="hover:text-white transition">Over Ons</a>
             <a href="/privacy" className="hover:text-white transition">Privacy & Disclaimer</a>
             <a href="https://instagram.com/CreatieveRetraites.nl" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">Instagram</a>
