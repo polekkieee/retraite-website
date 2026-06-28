@@ -37,16 +37,17 @@ export default function ClientHome({
   initialRetreatsNL,
   urlLocatie,
   urlCategorie,
+  urlZoek,
 }: {
   initialRetreatsEU: Retreat[];
   initialRetreatsNL: Retreat[];
   urlLocatie?: string;
   urlCategorie?: string;
+  urlZoek?: string;
 }) {
   const [retreatsEurope] = useState<Retreat[]>(initialRetreatsEU);
   const [retreatsNetherlands] = useState<Retreat[]>(initialRetreatsNL);
 
-  const [searchQuery, setSearchQuery] = useState<string>('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
 
@@ -64,6 +65,7 @@ export default function ClientHome({
     urlLocatie === 'nederland' ? 'nl' : 'europe'
   );
   const [activeCategory, setActiveCategory] = useState<string>(startCategorie);
+  const [searchQuery, setSearchQuery] = useState<string>(urlZoek || '');
 
   const baseRetreats = locationFilter === 'europe' ? retreatsEurope : retreatsNetherlands;
 
@@ -233,22 +235,20 @@ export default function ClientHome({
               <button
                 onClick={() => { setLocationFilter('europe'); setSelectedMonth('all'); }}
                 aria-pressed={locationFilter === 'europe'}
-                className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${
-                  locationFilter === 'europe'
+                className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${locationFilter === 'europe'
                     ? 'bg-stone-800 text-white border-stone-800 shadow-md transform scale-105'
                     : 'bg-white text-stone-400 border-stone-200 hover:border-stone-400 cursor-pointer'
-                }`}
+                  }`}
               >
                 🇪🇺 Europa
               </button>
               <button
                 onClick={() => { setLocationFilter('nl'); setSelectedMonth('all'); }}
                 aria-pressed={locationFilter === 'nl'}
-                className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${
-                  locationFilter === 'nl'
+                className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${locationFilter === 'nl'
                     ? 'bg-stone-800 text-white border-stone-800 shadow-md transform scale-105'
                     : 'bg-white text-stone-400 border-stone-200 hover:border-stone-400 cursor-pointer'
-                }`}
+                  }`}
               >
                 🇳🇱 Nederland
               </button>
@@ -284,11 +284,10 @@ export default function ClientHome({
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
                   aria-pressed={activeCategory === cat.id}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm transition duration-300 border whitespace-nowrap shrink-0 ${
-                    activeCategory === cat.id
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm transition duration-300 border whitespace-nowrap shrink-0 ${activeCategory === cat.id
                       ? 'bg-stone-200 text-stone-900 border-stone-300 font-medium shadow-sm'
                       : 'bg-transparent text-stone-500 border-transparent hover:bg-white hover:shadow-sm cursor-pointer'
-                  }`}
+                    }`}
                 >
                   <span aria-hidden="true" className={activeCategory === cat.id ? 'opacity-100' : 'opacity-50'}>
                     {cat.icon}

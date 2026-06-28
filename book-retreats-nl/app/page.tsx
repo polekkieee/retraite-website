@@ -103,11 +103,11 @@ function generateHomeStructuredData(): string {
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ locatie?: string; categorie?: string }>;
+  searchParams: Promise<{ locatie?: string; categorie?: string; zoek?: string }>;
 }) {
   const retreatsEurope = await getRetreatsEurope();
   const retreatsNL = await getRetreatsNL();
-  const { locatie, categorie } = await searchParams;
+  const { locatie, categorie, zoek } = await searchParams;
 
   return (
     <>
@@ -120,6 +120,7 @@ export default async function Page({
         initialRetreatsNL={retreatsNL}
         urlLocatie={locatie || ''}
         urlCategorie={categorie || ''}
+        urlZoek={zoek || ''}
       />
     </>
   );
