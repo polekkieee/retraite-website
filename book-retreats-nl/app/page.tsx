@@ -35,7 +35,7 @@ export const metadata: Metadata = {
       'Vind jouw creatieve retraite in Nederland, Frankrijk, Portugal en heel Europa. Van schrijfweken tot schilderateliers — ontdek de plek waar jouw creativiteit weer gaat stromen.',
     images: [
       {
-        url: 'https://www.creatieveretraites.nl/og-home.jpg',
+        url: 'https://www.creatieveretraites.nl/og-home.jpeg',
         width: 1200,
         height: 630,
         alt: 'Creatieve retraites in Nederland en Europa – CreatieveRetraites.nl',
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     title: 'Creatieve Retraites in Nederland en Europa | CreatieveRetraites.nl',
     description:
       'Van schrijfweken in Toscane tot schilderateliers aan zee — vind de plek waar jouw creativiteit weer gaat stromen.',
-    images: ['https://www.creatieveretraites.nl/og-home.jpg'],
+    images: ['https://www.creatieveretraites.nl/og-home.jpeg'],
   },
 };
 
@@ -77,7 +77,7 @@ function generateHomeStructuredData(): string {
     '@type': 'Organization',
     name: 'CreatieveRetraites.nl',
     url: 'https://www.creatieveretraites.nl',
-    logo: 'https://www.creatieveretraites.nl/logo.png',
+    logo: 'https://www.creatieveretraites.nl/icon.png',
     sameAs: ['https://www.instagram.com/CreatieveRetraites.nl'],
     description:
       'Redactioneel platform voor creatieve retraites in Nederland en Europa, voor makers die écht even weg willen.',
