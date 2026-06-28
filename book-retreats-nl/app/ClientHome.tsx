@@ -5,11 +5,9 @@ import { Search, MapPin, Star, Feather, Wind, Flame, Palette, PenTool, ChevronDo
 import { Playfair_Display, Lato } from 'next/font/google';
 import { CategoryId } from './lib/data';
 
-// --- FONTS ---
 const playfair = Playfair_Display({ subsets: ['latin'] });
 const lato = Lato({ weight: ['300', '400', '700'], subsets: ['latin'] });
 
-// --- CATEGORIES ---
 const categories = [
   { id: 'all', name: 'Alles', icon: <Feather size={16} /> },
   { id: 'art', name: 'Kunst & Schilderen', icon: <Palette size={16} /> },
@@ -34,13 +32,20 @@ export interface Retreat {
   dateDisplay?: string;
 }
 
-export default function ClientHome({ initialRetreatsEU, initialRetreatsNL, urlLocatie, urlCategorie }: { initialRetreatsEU: Retreat[]; initialRetreatsNL: Retreat[]; urlLocatie?: string; urlCategorie?: string }) {
-
-  // Zet binnengekomen data in de state
+export default function ClientHome({
+  initialRetreatsEU,
+  initialRetreatsNL,
+  urlLocatie,
+  urlCategorie,
+}: {
+  initialRetreatsEU: Retreat[];
+  initialRetreatsNL: Retreat[];
+  urlLocatie?: string;
+  urlCategorie?: string;
+}) {
   const [retreatsEurope] = useState<Retreat[]>(initialRetreatsEU);
   const [retreatsNetherlands] = useState<Retreat[]>(initialRetreatsNL);
 
-  // State voor filters
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
@@ -65,9 +70,7 @@ export default function ClientHome({ initialRetreatsEU, initialRetreatsNL, urlLo
   const availableMonths = useMemo(() => {
     const months = new Set<string>();
     baseRetreats.forEach(r => {
-      if (r.startDate) {
-        months.add(r.startDate.substring(0, 7));
-      }
+      if (r.startDate) months.add(r.startDate.substring(0, 7));
     });
     return Array.from(months).sort();
   }, [baseRetreats]);
@@ -81,7 +84,6 @@ export default function ClientHome({ initialRetreatsEU, initialRetreatsNL, urlLo
   function scrollToProducts() {
     const element = document.getElementById('productGrid');
     if (element) {
-      // Offset scroll by navbar height (52px) so content isn't hidden behind sticky header
       const top = element.getBoundingClientRect().top + window.scrollY - 52;
       window.scrollTo({ top, behavior: 'smooth' });
     }
@@ -89,134 +91,173 @@ export default function ClientHome({ initialRetreatsEU, initialRetreatsNL, urlLo
 
   const filteredRetreats = useMemo(() => {
     return baseRetreats.filter(retreat => {
-      const matchesCategory = activeCategory === 'all'
-        ? true
-        : retreat.category.includes(activeCategory as CategoryId);
-
+      const matchesCategory =
+        activeCategory === 'all' ? true : retreat.category.includes(activeCategory as CategoryId);
       const query = searchQuery.toLowerCase();
       const matchesSearch =
         retreat.title.toLowerCase().includes(query) ||
         retreat.desc.toLowerCase().includes(query) ||
         retreat.location.toLowerCase().includes(query);
-
-      const matchesMonth = selectedMonth === 'all' || !retreat.startDate || retreat.startDate.startsWith(selectedMonth);
-
+      const matchesMonth =
+        selectedMonth === 'all' || !retreat.startDate || retreat.startDate.startsWith(selectedMonth);
       return matchesCategory && matchesSearch && matchesMonth;
     });
   }, [activeCategory, locationFilter, searchQuery, selectedMonth, baseRetreats]);
 
   return (
     <div className={`min-h-screen bg-[#FAFAF9] text-stone-800 ${lato.className}`}>
-      {/* --- HEADER --- */}
-      <nav className="fixed top-0 w-full z-50 bg-[#FAFAF9]/80 backdrop-blur-md border-b border-stone-200/50">
 
-        {/* DE KLIKVANGER (OVERLAY) */}
-        {/* Deze zit nu op z-90, dus BOVEN de pagina content, maar ONDER het menu */}
-        {isDropdownOpen && (
-          <div
-            className="fixed inset-0 z-[90] bg-transparent cursor-default h-screen w-screen"
-            onClick={() => setIsDropdownOpen(false)}
-          />
-        )}
+      {/* NAV */}
+      <header>
+        <nav
+          aria-label="Hoofdnavigatie CreatieveRetraites.nl"
+          className="fixed top-0 w-full z-50 bg-[#FAFAF9]/80 backdrop-blur-md border-b border-stone-200/50"
+        >
+          {isDropdownOpen && (
+            <div
+              className="fixed inset-0 z-[90] bg-transparent cursor-default h-screen w-screen"
+              onClick={() => setIsDropdownOpen(false)}
+              aria-hidden="true"
+            />
+          )}
+          <div className="max-w-7xl mx-auto px-4 md:px-6 h-13 md:h-13 flex items-center justify-between relative">
+            <a
+              href="/"
+              aria-label="CreatieveRetraites.nl – terug naar home"
+              aria-current="page"
+              className={`text-lg md:text-2xl font-semibold tracking-tight text-stone-900 ${playfair.className} relative z-[50]`}
+            >
+              CreatieveRetraites<span className="text-stone-400">.nl</span>
+            </a>
 
-        <div className="max-w-7xl mx-auto px-4 md:px-6 h-13 md:h-13 flex items-center justify-between relative">
+            <div className="flex items-center gap-4 md:gap-8">
+              <div className="relative z-[100]">
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  aria-expanded={isDropdownOpen}
+                  aria-haspopup="true"
+                  aria-controls="inspiratie-menu"
+                  className="text-[11px] md:text-xs uppercase tracking-widest font-bold text-stone-500 hover:text-stone-900 transition flex items-center gap-1 py-2 cursor-pointer"
+                >
+                  Inspiratie
+                  <ChevronDown
+                    size={14}
+                    aria-hidden="true"
+                    className={`transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
 
-          {/* 1. LOGO */}
-          <a href="/" className={`text-lg md:text-2xl font-semibold tracking-tight text-stone-900 ${playfair.className} relative z-[50]`}>
-            CreatieveRetraites<span className="text-stone-400">.nl</span>
-          </a>
-
-          <div className="flex items-center gap-4 md:gap-8">
-
-            {/* 2. INSPIRATIE DROPDOWN */}
-            {/* We geven dit blok z-100 zodat het BOVEN de overlay (z-90) zweeft */}
-            <div className="relative z-[100]">
-              <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="text-[11px] md:text-xs uppercase tracking-widest font-bold text-stone-500 hover:text-stone-900 transition flex items-center gap-1 py-2 cursor-pointer"
-              >
-                Inspiratie
-                <ChevronDown size={14} className={`transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {isDropdownOpen && (
-                <div className="absolute top-full right-[-50px] md:right-0 w-64 bg-white border border-stone-100 shadow-xl rounded-sm py-4 mt-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div className="px-6 mb-2 text-[10px] uppercase tracking-[0.2em] text-stone-400 font-bold">
-                    Tips
+                {isDropdownOpen && (
+                  <div
+                    id="inspiratie-menu"
+                    role="menu"
+                    className="absolute top-full right-[-50px] md:right-0 w-64 bg-white border border-stone-100 shadow-xl rounded-sm py-4 mt-2 animate-in fade-in slide-in-from-top-2 duration-200"
+                  >
+                    <div className="px-6 mb-2 text-[10px] uppercase tracking-[0.2em] text-stone-400 font-bold">
+                      Tips
+                    </div>
+                    <a
+                      href="/uitgelicht"
+                      role="menuitem"
+                      className="block px-6 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition"
+                    >
+                      Uitgelichte retraites
+                    </a>
+                    <div className="h-px bg-stone-100 my-2 mx-6" aria-hidden="true" />
+                    <a
+                      href="/over-ons"
+                      role="menuitem"
+                      className="block px-6 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition font-medium"
+                    >
+                      Over Ons
+                    </a>
                   </div>
-                  <a href="/uitgelicht" className="block px-6 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
-                    Uitgelichte retraites
-                  </a>
-                  <div className="h-px bg-stone-100 my-2 mx-6" />
-                  <a href="/over-ons" className="block px-6 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition font-medium">
-                    Over Ons
-                  </a>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </nav>
-      {/* --- HERO SECTION --- */}
-      <section className="pt-30 pb-4 px-6 max-w-7xl mx-auto text-center">
+        </nav>
+      </header>
+
+      {/* HERO */}
+      {/*
+        data-speakable="hero": the intro paragraph is the text AI crawlers
+        (Google SGE, Perplexity) will cite when answering "what is creatieveretraites.nl".
+        Referenced in the WebPage speakable schema in page.tsx.
+      */}
+      <section
+        aria-label="Creatieve retraites vinden in Nederland en Europa"
+        className="pt-30 pb-4 px-6 max-w-7xl mx-auto text-center"
+      >
         <h1 className={`text-4xl md:text-6xl text-stone-900 leading-tight mb-6 ${playfair.className}`}>
           Geef je ideeën de ruimte<br />die ze verdienen.
         </h1>
-        <p className="text-sm text-stone-500 max-w-2xl mb-8 mx-auto leading-relaxed">
-          Van <strong>schrijfweken</strong> in Toscane tot <strong>schilderateliers</strong> aan zee.<br />
-          Vind de plek waar <strong>jouw creativiteit</strong> weer gaat stromen.
+        <p data-speakable="hero" className="text-sm text-stone-500 max-w-2xl mb-8 mx-auto leading-relaxed">
+          Van <strong>schrijfweken</strong> in Frankrijk tot <strong>schilderateliers</strong> aan zee.
+          Vind de creatieve retraite in <strong>Nederland of Europa</strong> waar jouw creativiteit weer gaat stromen —
+          voor een weekend weg of een hele week.
         </p>
 
-        {/* Search Bar */}
         <div className="max-w-lg mx-auto relative group">
+          <label htmlFor="retreat-search" className="sr-only">
+            Zoek op bestemming, thema of discipline
+          </label>
           <input
-            type="text"
+            id="retreat-search"
+            type="search"
             placeholder="Zoek op 'Yoga', 'Zon' of 'Spanje'..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 (e.target as HTMLInputElement).blur();
-
                 scrollToProducts();
               }
             }}
             className="w-full pl-12 pr-6 py-4 bg-white border border-stone-200 rounded-full shadow-sm text-stone-600 focus:outline-none focus:ring-2 focus:ring-stone-400 transition-all placeholder:text-stone-300"
           />
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 group-focus-within:text-stone-800 transition-colors" size={20} />
+          <Search
+            aria-hidden="true"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 group-focus-within:text-stone-800 transition-colors"
+            size={20}
+          />
         </div>
       </section>
 
-      {/* --- FILTERS & LOCATION TOGGLE --- */}
-      <div id='productGrid' className="sticky top-13 z-40 bg-[#FAFAF9] border-b border-stone-100 mb-8 shadow-md/20">
+      {/* FILTERS */}
+      <div id="productGrid" className="sticky top-13 z-40 bg-[#FAFAF9] border-b border-stone-100 mb-8 shadow-md/20">
         <div className="max-w-7xl mx-auto px-4 pt-4 space-y-4">
 
-          {/* 1. Location Toggle & Datum Filter */}
           <div className="flex flex-col md:flex-row justify-center items-center gap-3">
-            <div className="flex gap-3">
+            <div className="flex gap-3" role="group" aria-label="Filter op locatie">
               <button
                 onClick={() => { setLocationFilter('europe'); setSelectedMonth('all'); }}
-                className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${locationFilter === 'europe'
-                  ? 'bg-stone-800 text-white border-stone-800 shadow-md transform scale-105 '
-                  : 'bg-white text-stone-400 border-stone-200 hover:border-stone-400 cursor-pointer'
-                  }`}
+                aria-pressed={locationFilter === 'europe'}
+                className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${
+                  locationFilter === 'europe'
+                    ? 'bg-stone-800 text-white border-stone-800 shadow-md transform scale-105'
+                    : 'bg-white text-stone-400 border-stone-200 hover:border-stone-400 cursor-pointer'
+                }`}
               >
                 🇪🇺 Europa
               </button>
               <button
                 onClick={() => { setLocationFilter('nl'); setSelectedMonth('all'); }}
-                className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${locationFilter === 'nl'
-                  ? 'bg-stone-800 text-white border-stone-800 shadow-md transform scale-105'
-                  : 'bg-white text-stone-400 border-stone-200 hover:border-stone-400 cursor-pointer'
-                  }`}
+                aria-pressed={locationFilter === 'nl'}
+                className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${
+                  locationFilter === 'nl'
+                    ? 'bg-stone-800 text-white border-stone-800 shadow-md transform scale-105'
+                    : 'bg-white text-stone-400 border-stone-200 hover:border-stone-400 cursor-pointer'
+                }`}
               >
                 🇳🇱 Nederland
               </button>
             </div>
 
-            {/* Datum Dropdown */}
             <div className="relative w-full md:w-auto">
+              <label htmlFor="month-filter" className="sr-only">Filter op maand</label>
               <select
+                id="month-filter"
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(e.target.value)}
                 className="w-full appearance-none bg-white border border-stone-200 text-stone-500 hover:text-stone-800 text-xs font-bold uppercase tracking-widest px-6 py-2 pr-10 rounded-full focus:outline-none cursor-pointer transition-all shadow-sm"
@@ -228,132 +269,169 @@ export default function ClientHome({ initialRetreatsEU, initialRetreatsNL, urlLo
                   </option>
                 ))}
               </select>
-              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 pointer-events-none" />
+              <ChevronDown
+                aria-hidden="true"
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 pointer-events-none"
+              />
             </div>
           </div>
 
-          {/* 2. Categories */}
-          <div className="relative">
-
-            <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#FAFAF9] to-transparent z-10 pointer-events-none md:hidden" />
-
+          <div className="relative" role="group" aria-label="Filter op categorie">
+            <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#FAFAF9] to-transparent z-10 pointer-events-none md:hidden" aria-hidden="true" />
             <div className="flex justify-start md:justify-center overflow-x-auto no-scrollbar gap-2 pb-2 px-1">
               {categories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`
-                      flex items-center gap-2 px-4 py-2 rounded-full text-sm transition duration-300 border whitespace-nowrap shrink-0
-                      ${activeCategory === cat.id
+                  aria-pressed={activeCategory === cat.id}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm transition duration-300 border whitespace-nowrap shrink-0 ${
+                    activeCategory === cat.id
                       ? 'bg-stone-200 text-stone-900 border-stone-300 font-medium shadow-sm'
                       : 'bg-transparent text-stone-500 border-transparent hover:bg-white hover:shadow-sm cursor-pointer'
-                    }
-                    `}
+                  }`}
                 >
-                  <span className={activeCategory === cat.id ? 'opacity-100' : 'opacity-50'}>
+                  <span aria-hidden="true" className={activeCategory === cat.id ? 'opacity-100' : 'opacity-50'}>
                     {cat.icon}
                   </span>
                   <span>{cat.name}</span>
                 </button>
               ))}
-              <div className="w-8 shrink-0 md:hidden" />
+              <div className="w-8 shrink-0 md:hidden" aria-hidden="true" />
             </div>
           </div>
         </div>
       </div>
 
-      {/* --- GRID --- */}
+      {/* GRID */}
       <main className="max-w-7xl mx-auto px-6 pb-24">
-
-        <div className="mb-8 text-stone-400 text-sm font-light text-center md:text-left animate-fade-in">
+        <p
+          aria-live="polite"
+          aria-atomic="true"
+          className="mb-8 text-stone-400 text-sm font-light text-center md:text-left animate-fade-in"
+        >
           {filteredRetreats.length} {filteredRetreats.length === 1 ? 'plek' : 'plekken'} gevonden
           {locationFilter === 'nl' ? ' in Nederland' : ' in Europa'}
           {searchQuery && ` voor "${searchQuery}"`}
-        </div>
+        </p>
 
         {filteredRetreats.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+          <ul
+            aria-label={`Creatieve retraites ${locationFilter === 'nl' ? 'in Nederland' : 'in Europa'}`}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 list-none p-0"
+          >
             {filteredRetreats.map((retreat) => (
-              <div
-                key={retreat.id}
-                onClick={() => window.open(retreat.affiliateLink, '_blank', 'noopener,noreferrer')}
-                className="group cursor-pointer flex flex-col h-full relative" // relative toegevoegd
-              >
-
-                {/* --- IMAGE CARD MET HOVER EFFECT --- */}
-                <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-stone-200 mb-4 shadow-sm">
-                  <img
-                    src={retreat.image}
-                    alt={retreat.title}
-                    loading="lazy"
-                    className="object-cover w-full h-full group-hover:scale-105 transition duration-700 ease-in-out"
-                  />
-
-                  {/* --- DESKTOP: SLIDE UP TEXT OVERLAY --- */}
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                    <div className="text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hidden md:block">
-                      {/* Alleen zichtbaar op desktop (md:block) */}
-                      <p className="text-sm font-medium leading-relaxed drop-shadow-2xl">
-                        {retreat.desc}
-                      </p>
-                      <div className="mt-3 text-xs font-bold uppercase tracking-widest text-stone-200 underline decoration-stone-400 underline-offset-4">
-                        Lees meer &rarr;
+              <li key={retreat.id}>
+                {/*
+                  SEO: was onClick + window.open — invisible to crawlers.
+                  Now a real <a> tag so Google can follow and index affiliate links.
+                  Visual behaviour is identical; the whole card is still clickable.
+                */}
+                <a
+                  href={retreat.affiliateLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${retreat.title} – creatieve retraite in ${retreat.location}, vanaf €${retreat.price}`}
+                  className="group cursor-pointer flex flex-col h-full relative no-underline"
+                  itemScope
+                  itemType="https://schema.org/LodgingBusiness"
+                >
+                  {/* IMAGE */}
+                  <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-stone-200 mb-4 shadow-sm">
+                    <img
+                      src={retreat.image}
+                      alt={`${retreat.title} – creatieve retraite in ${retreat.location}`}
+                      loading="lazy"
+                      width={400}
+                      height={500}
+                      itemProp="image"
+                      className="object-cover w-full h-full group-hover:scale-105 transition duration-700 ease-in-out"
+                    />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                      <div className="text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hidden md:block">
+                        <p className="text-sm font-medium leading-relaxed drop-shadow-2xl">
+                          {retreat.desc}
+                        </p>
+                        <div className="mt-3 text-xs font-bold uppercase tracking-widest text-stone-200 underline decoration-stone-400 underline-offset-4">
+                          Lees meer &rarr;
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* --- CONTENT ONDER DE FOTO --- */}
-                <div className="flex flex-col flex-grow">
-                  {/* Titel & Rating */}
-                  <div className="flex justify-between items-start mb-1">
-                    <h3 className={`text-lg text-stone-900 ${playfair.className} pr-2 leading-tight`}>
-                      {retreat.title}
-                    </h3>
-                    <div className="flex items-center gap-1 text-sm font-medium text-stone-900 shrink-0 bg-stone-100 px-2 py-1 rounded-full">
-                      <Star size={12} className="fill-stone-900" />
-                      <span>{retreat.rating}</span>
-                    </div>
-                  </div>
-
-                  {/* Locatie */}
-                  <div className="flex flex-col gap-1 mb-3">
-                    <div className="flex items-center gap-1 text-stone-500 text-xs uppercase tracking-widest">
-                      <MapPin size={12} />
-                      {retreat.location}
-                    </div>
-                  </div>
-
-                  {/* --- MOBIEL: KORTE TEKST --- */}
-                  {/* Op desktop verbergen we deze tekst (md:hidden) omdat hij daar nu IN de foto staat. 
-            Op mobiel tonen we hem wel, maar afgekort. */}
-                  <p className="text-stone-500 text-sm leading-relaxed mb-4 line-clamp-2 md:hidden">
-                    {retreat.desc}
-                  </p>
-
-                  {/* Prijs & Datum */}
-                  <div className="flex items-center justify-between border-t border-stone-100 pt-4 mt-auto gap-4">
-                    <div className="shrink-0">
-                      <span className={`text-lg ${playfair.className}`}>€{retreat.price}</span>
+                  {/* CONTENT */}
+                  <div className="flex flex-col flex-grow">
+                    <div className="flex justify-between items-start mb-1">
+                      <h2
+                        itemProp="name"
+                        className={`text-lg text-stone-900 ${playfair.className} pr-2 leading-tight`}
+                      >
+                        {retreat.title}
+                      </h2>
+                      {retreat.rating && (
+                        <div
+                          className="flex items-center gap-1 text-sm font-medium text-stone-900 shrink-0 bg-stone-100 px-2 py-1 rounded-full"
+                          aria-label={`Beoordeling: ${retreat.rating} van 5`}
+                          itemProp="aggregateRating"
+                          itemScope
+                          itemType="https://schema.org/AggregateRating"
+                        >
+                          <Star size={12} className="fill-stone-900" aria-hidden="true" />
+                          <span itemProp="ratingValue">{retreat.rating}</span>
+                          <meta itemProp="bestRating" content="5" />
+                        </div>
+                      )}
                     </div>
 
-                    {retreat.dateDisplay && (
-                      <div className="flex items-center justify-end gap-1.5 text-stone-800 text-[10px] md:text-xs uppercase tracking-widest font-medium group-hover:text-stone-600 transition-colors">
-                        <Calendar size={14} className="text-[#C8A663] shrink-0" />
-                        <span className="leading-[1.4] text-right max-w-[140px] md:max-w-[180px]">
-                          {retreat.dateDisplay}
+                    <div
+                      className="flex flex-col gap-1 mb-3"
+                      itemProp="address"
+                      itemScope
+                      itemType="https://schema.org/PostalAddress"
+                    >
+                      <div className="flex items-center gap-1 text-stone-500 text-xs uppercase tracking-widest">
+                        <MapPin size={12} aria-hidden="true" />
+                        <span itemProp="addressLocality">{retreat.location}</span>
+                      </div>
+                    </div>
+
+                    <p
+                      itemProp="description"
+                      className="text-stone-500 text-sm leading-relaxed mb-4 line-clamp-2 md:hidden"
+                    >
+                      {retreat.desc}
+                    </p>
+
+                    <div className="flex items-center justify-between border-t border-stone-100 pt-4 mt-auto gap-4">
+                      <div className="shrink-0">
+                        <span
+                          className={`text-lg ${playfair.className}`}
+                          itemProp="priceRange"
+                        >
+                          €{retreat.price}
                         </span>
                       </div>
-                    )}
+                      {retreat.dateDisplay && (
+                        <div className="flex items-center justify-end gap-1.5 text-stone-800 text-[10px] md:text-xs uppercase tracking-widest font-medium group-hover:text-stone-600 transition-colors">
+                          <Calendar size={14} className="text-[#C8A663] shrink-0" aria-hidden="true" />
+                          <time
+                            dateTime={retreat.startDate || undefined}
+                            className="leading-[1.4] text-right max-w-[140px] md:max-w-[180px]"
+                          >
+                            {retreat.dateDisplay}
+                          </time>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </div>
+                </a>
+              </li>
             ))}
-          </div>
+          </ul>
         ) : (
-          /* Empty State */
           <div className="text-center py-20 text-stone-400">
-            <p className="text-lg mb-2">Geen retraites gevonden in {locationFilter === 'nl' ? 'Nederland' : 'Europa'}.</p>
+            <p className="text-lg mb-2">
+              Geen retraites gevonden in {locationFilter === 'nl' ? 'Nederland' : 'Europa'}.
+            </p>
             <button
               onClick={() => { setSearchQuery(''); setActiveCategory('all'); }}
               className="text-sm underline hover:text-stone-900 cursor-pointer"
@@ -364,24 +442,40 @@ export default function ClientHome({ initialRetreatsEU, initialRetreatsNL, urlLo
         )}
       </main>
 
-      {/* --- FOOTER --- */}
-      <footer className="bg-stone-900 text-stone-400 py-16">
+      {/* FOOTER */}
+      <footer role="contentinfo" className="bg-stone-900 text-stone-400 py-16">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-8">
           <div>
-            <h2 className={`text-2xl text-[#FAFAF9] mb-4 ${playfair.className}`}>CreatieveRetraites.nl</h2>
+            <h2 className={`text-2xl text-[#FAFAF9] mb-4 ${playfair.className}`}>
+              CreatieveRetraites.nl
+            </h2>
             <p className="max-w-xs font-light text-sm">
-              De startplek voor jouw volgende creatieve sprong. Wij verbinden makers met unieke locaties.
+              De startplek voor jouw volgende creatieve retraite in Nederland en Europa.
+              Wij verbinden makers met unieke locaties — handpicked door onze redactie.
             </p>
           </div>
-          <div className="flex gap-8 md:justify-end text-xs uppercase tracking-widest font-bold">
+          <nav
+            aria-label="Footernavigatie"
+            className="flex gap-8 md:justify-end text-xs uppercase tracking-widest font-bold"
+          >
             <a href="/uitgelicht" className="hover:text-white transition">Uitgelichte Retraites</a>
             <a href="/over-ons" className="hover:text-white transition">Over Ons</a>
-            <a href="/privacy" className="hover:text-white transition">Privacy & Disclaimer</a>
-            <a href="https://instagram.com/CreatieveRetraites.nl" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">Instagram</a>
-          </div>
+            <a href="/privacy" className="hover:text-white transition">Privacy &amp; Disclaimer</a>
+            <a
+              href="https://instagram.com/CreatieveRetraites.nl"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Volg CreatieveRetraites.nl op Instagram"
+              className="hover:text-white transition"
+            >
+              Instagram
+            </a>
+          </nav>
         </div>
         <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-white/5 text-[10px] text-center opacity-50">
-          © 2026 CreatieveRetraites.nl - Onderdeel van de creatieve community.
+          <small>
+            &copy; {new Date().getFullYear()} CreatieveRetraites.nl &mdash; Onderdeel van de creatieve community.
+          </small>
         </div>
       </footer>
     </div>
