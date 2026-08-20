@@ -58,78 +58,7 @@ export default function ClientHome({
     .filter(Boolean) as Retreat[];
 
   return (
-    <div className={`min-h-screen bg-[#FAFAF9] text-stone-800 ${lato.className}`}>
-
-      <header>
-        <nav
-          aria-label="Hoofdnavigatie CreatieveRetraites.nl"
-          className="fixed top-0 w-full z-50 bg-[#FAFAF9]/90 backdrop-blur-md border-b border-stone-200/50"
-        >
-          {isDropdownOpen && (
-            <div
-              className="fixed inset-0 z-[90] bg-transparent cursor-default h-screen w-screen"
-              onClick={() => setIsDropdownOpen(false)}
-              aria-hidden="true"
-            />
-          )}
-          <div className="max-w-7xl mx-auto px-4 md:px-6 h-13 md:h-13 flex items-center justify-between relative">
-            <a
-              href="/"
-              aria-label="CreatieveRetraites.nl – terug naar home"
-              className={`text-lg md:text-2xl font-semibold tracking-tight text-stone-900 ${playfair.className} relative z-[50]`}
-            >
-              CreatieveRetraites<span className="text-stone-400">.nl</span>
-            </a>
-
-            <div className="flex items-center gap-4 md:gap-8">
-              <div className="relative z-[100]">
-                <button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  aria-expanded={isDropdownOpen}
-                  aria-haspopup="true"
-                  aria-controls="inspiratie-menu"
-                  className="text-[11px] md:text-xs uppercase tracking-widest font-bold text-stone-500 hover:text-stone-900 transition flex items-center gap-1 py-2 cursor-pointer"
-                >
-                  Inspiratie
-                  <ChevronDown
-                    size={14}
-                    aria-hidden="true"
-                    className={`transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}
-                  />
-                </button>
-
-                {isDropdownOpen && (
-                  <div
-                    id="inspiratie-menu"
-                    role="menu"
-                    className="absolute top-full right-[-50px] md:right-0 w-64 bg-white border border-stone-100 shadow-xl rounded-sm py-4 mt-2 animate-in fade-in slide-in-from-top-2 duration-200"
-                  >
-                    <div className="px-6 mb-2 text-[10px] uppercase tracking-[0.2em] text-stone-400 font-bold">
-                      Tips
-                    </div>
-                    <a
-                      href="/uitgelicht"
-                      role="menuitem"
-                      aria-current="page"
-                      className="block px-6 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition"
-                    >
-                      Uitgelicht
-                    </a>
-                    <div className="h-px bg-stone-100 my-2 mx-6" aria-hidden="true" />
-                    <a
-                      href="/over-ons"
-                      role="menuitem"
-                      className="block px-6 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition font-medium"
-                    >
-                      Over Ons
-                    </a>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </nav>
-      </header>
+    <div>
 
       <section
         aria-label="Uitgelichte creatieve retraites – introductie"
@@ -259,43 +188,6 @@ export default function ClientHome({
         </div>
       </main>
 
-      <footer role="contentinfo" className="bg-stone-900 text-stone-400 py-16">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-8">
-          <div>
-            <h2 className={`text-2xl text-[#FAFAF9] mb-4 ${playfair.className}`}>
-              CreatieveRetraites.nl
-            </h2>
-            <p className="max-w-xs font-light text-sm">
-              De startplek voor jouw volgende creatieve retraite in Nederland en Europa.
-              Wij verbinden makers met unieke locaties — handpicked door onze redactie.
-            </p>
-          </div>
-          <nav
-            aria-label="Footernavigatie"
-            className="flex gap-8 md:justify-end text-xs uppercase tracking-widest font-bold"
-          >
-            <a href="/uitgelicht" aria-current="page" className="hover:text-white transition">
-              Uitgelichte Retraites
-            </a>
-            <a href="/over-ons" className="hover:text-white transition">Over Ons</a>
-            <a href="/privacy" className="hover:text-white transition">Privacy &amp; Disclaimer</a>
-            <a
-              href="https://instagram.com/CreatieveRetraites.nl"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Volg CreatieveRetraites.nl op Instagram"
-              className="hover:text-white transition"
-            >
-              Instagram
-            </a>
-          </nav>
-        </div>
-        <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-white/5 text-[10px] text-center opacity-50">
-          <small>
-            &copy; {new Date().getFullYear()} CreatieveRetraites.nl &mdash; Onderdeel van de creatieve community.
-          </small>
-        </div>
-      </footer>
     </div>
   );
 }
