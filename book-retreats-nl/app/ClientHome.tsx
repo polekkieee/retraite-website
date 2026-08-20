@@ -71,10 +71,23 @@ export default function ClientHome({
 
   const availableMonths = useMemo(() => {
     const months = new Set<string>();
+    
+    const nu = new Date();
+    const huidigJaar = nu.getFullYear();
+    const huidigeMaand = String(nu.getMonth() + 1).padStart(2, '0');
+    const huidigeJaarMaand = `${huidigJaar}-${huidigeMaand}`; 
+
     baseRetreats.forEach(r => {
-      if (r.startDate) months.add(r.startDate.substring(0, 7));
+      if (r.startDate) {
+        const retreatMaand = r.startDate.substring(0, 7); 
+        
+        if (retreatMaand >= huidigeJaarMaand) {
+          months.add(retreatMaand);
+        }
+      }
     });
-    return Array.from(months).sort();
+    
+    return Array.from(months).sort(); 
   }, [baseRetreats]);
 
   const formatMonthText = (yyyyMM: string) => {
