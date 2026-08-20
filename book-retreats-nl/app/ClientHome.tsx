@@ -276,7 +276,7 @@ export default function ClientHome({
                   itemType="https://schema.org/LodgingBusiness"
                 >
                   {/* IMAGE */}
-                  <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-stone-200 mb-4 shadow-sm">
+                  <div className="relative aspect-[5/6] overflow-hidden rounded-sm bg-stone-200 mb-4 shadow-sm">
                     <img
                       src={retreat.image}
                       alt={`${retreat.title} – creatieve retraite in ${retreat.location}`}
