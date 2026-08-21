@@ -125,10 +125,16 @@ export default function ClientHome({
                   />
                   <div
                     className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-sm px-4 py-2 text-xs font-bold uppercase tracking-widest text-stone-900 shadow-lg"
-                    aria-label={`Prijs: vanaf €${retreat.price}`}
+                    aria-label={retreat.price ? `Prijs: vanaf €${retreat.price}` : "Prijs op aanvraag"}
                   >
-                    <span aria-hidden="true">Vanaf €</span>
-                    <span itemProp="priceRange">{retreat.price}</span>
+                    {retreat.price ? (
+                      <>
+                        <span aria-hidden="true">Vanaf €</span>
+                        <span itemProp="priceRange">{retreat.price}</span>
+                      </>
+                    ) : (
+                      <span>Prijs op aanvraag</span>
+                    )}
                   </div>
                 </div>
 
