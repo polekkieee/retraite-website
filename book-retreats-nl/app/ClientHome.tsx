@@ -29,7 +29,7 @@ export interface Retreat {
   affiliateLink: string;
   category: CategoryId[];
   startDate?: string;
-  dateDisplay?: string;
+  dateDisplay?: string; 
 }
 
 export default function ClientHome({
@@ -116,7 +116,7 @@ export default function ClientHome({
       const matchesMonth =
         selectedMonth === 'all' || !retreat.startDate || retreat.startDate.startsWith(selectedMonth);
       return matchesCategory && matchesSearch && matchesMonth;
-    });
+    }).sort((a, b) => a.id - b.id);
   }, [activeCategory, locationFilter, searchQuery, selectedMonth, baseRetreats]);
 
   return (
@@ -343,19 +343,22 @@ export default function ClientHome({
 
                     <div className="flex items-center justify-between border-t border-stone-100 pt-4 mt-auto gap-4">
                       <div className="shrink-0">
-                        <span
-                          className={`text-lg ${playfair.className}`}
-                          itemProp="priceRange"
-                        >
-                          €{retreat.price}
-                        </span>
+                        {retreat.price && (
+                          <span
+                            className={`text-lg ${playfair.className}`}
+                            itemProp="priceRange"
+                          >
+                            €{retreat.price}
+                          </span>
+                        )}
                       </div>
+
                       {retreat.dateDisplay && (
-                        <div className="flex items-center justify-end gap-1.5 text-stone-800 text-[10px] md:text-xs uppercase tracking-widest font-medium group-hover:text-stone-600 transition-colors">
-                          <Calendar size={14} className="text-[#C8A663] shrink-0" aria-hidden="true" />
+                        <div className="flex flex-row-reverse items-start ml-auto gap-1.5 text-stone-800 text-[10px] md:text-xs uppercase tracking-widest font-medium group-hover:text-stone-600 transition-colors w-fit">
+                          <Calendar size={14} className="text-[#C8A663] shrink-0 mt-[2px]" aria-hidden="true" />
                           <time
                             dateTime={retreat.startDate || undefined}
-                            className="leading-[1.4] text-right max-w-[140px] md:max-w-[180px]"
+                            className="leading-[1.4] text-right w-fit max-w-[140px] md:max-w-[180px]"
                           >
                             {retreat.dateDisplay}
                           </time>
@@ -381,7 +384,7 @@ export default function ClientHome({
           </div>
         )}
       </main>
-      
+
     </div>
   );
 }
