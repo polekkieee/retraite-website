@@ -12,6 +12,7 @@ export interface Retreat {
   location: string;
   price: number;
   rating: number;
+  reviewCount: number;
   image: string;
   affiliateLink: string;
   category: CategoryId[];

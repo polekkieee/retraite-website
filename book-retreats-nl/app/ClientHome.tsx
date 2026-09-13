@@ -25,6 +25,7 @@ export interface Retreat {
   location: string;
   price: number;
   rating: number;
+  reviewCount: number;
   image: string;
   affiliateLink: string;
   category: CategoryId[];
@@ -318,6 +319,8 @@ export default function ClientHome({
                           <Star size={12} className="fill-stone-900" aria-hidden="true" />
                           <span itemProp="ratingValue">{retreat.rating}</span>
                           <meta itemProp="bestRating" content="5" />
+                          <meta itemProp="worstRating" content="1" />
+                          <meta itemProp="reviewCount" content={retreat.reviewCount.toString()} />
                         </div>
                       )}
                     </div>
