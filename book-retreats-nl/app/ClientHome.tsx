@@ -320,7 +320,7 @@ export default function ClientHome({
                           <span itemProp="ratingValue">{retreat.rating}</span>
                           <meta itemProp="bestRating" content="5" />
                           <meta itemProp="worstRating" content="1" />
-                          <meta itemProp="reviewCount" content={retreat.reviewCount.toString()} />
+                          <meta itemProp="reviewCount" content={String(retreat.reviewCount)} />
                         </div>
                       )}
                     </div>
