@@ -60,7 +60,7 @@ export default function OverOns() {
           </p>
 
           <p>
-            Contact: <a href="mailto:info@creativereitraites.nl" className="text-stone-700">info@creativereitraites.nl</a>
+            Contact: <a href="mailto:info@creatievereitraites.nl" className="text-stone-700">info@creativereitraites.nl</a>
           </p>
         </div>
       </div>
